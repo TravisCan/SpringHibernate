@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 /**
- * @author Harit
+ * @author Travis
  *
  */
 
@@ -28,25 +28,25 @@ public class ContactsControllers
 {
 	@Autowired
 	private ContactsDAO contactsDAO;
-	
+
 	@Autowired
 	private ContactFormValidator validator;
-	
+
 	@RequestMapping("/home")
 	public String home()
 	{
 		return "home";
 	}
-	
-	
+
+
 	@InitBinder
-	public void initBinder(WebDataBinder binder) 
+	public void initBinder(WebDataBinder binder)
 	{
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		dateFormat.setLenient(false);
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
-		
+
 	@RequestMapping("/searchContacts")
 	public ModelAndView searchContacts(@RequestParam(required= false, defaultValue="") String name)
 	{
@@ -55,7 +55,7 @@ public class ContactsControllers
 		mav.addObject("SEARCH_CONTACTS_RESULTS_KEY", contacts);
 		return mav;
 	}
-	
+
 	@RequestMapping("/viewAllContacts")
 	public ModelAndView getAllContacts()
 	{
@@ -64,7 +64,7 @@ public class ContactsControllers
 		mav.addObject("SEARCH_CONTACTS_RESULTS_KEY", contacts);
 		return mav;
 	}
-	
+
 	@RequestMapping(value="/saveContact", method=RequestMethod.GET)
 	public ModelAndView newuserForm()
 	{
@@ -73,20 +73,20 @@ public class ContactsControllers
 		mav.getModelMap().put("newContact", contact);
 		return mav;
 	}
-	
+
 	@RequestMapping(value="/saveContact", method=RequestMethod.POST)
 	public String create(@ModelAttribute("newContact")Contact contact, BindingResult result, SessionStatus status)
 	{
 		validator.validate(contact, result);
-		if (result.hasErrors()) 
-		{				
+		if (result.hasErrors())
+		{
 			return "newContact";
 		}
 		contactsDAO.save(contact);
 		status.setComplete();
 		return "redirect:viewAllContacts.do";
 	}
-	
+
 	@RequestMapping(value="/updateContact", method=RequestMethod.GET)
 	public ModelAndView edit(@RequestParam("id")Integer id)
 	{
@@ -95,7 +95,7 @@ public class ContactsControllers
 		mav.addObject("editContact", contact);
 		return mav;
 	}
-	
+
 	@RequestMapping(value="/updateContact", method=RequestMethod.POST)
 	public String update(@ModelAttribute("editContact") Contact contact, BindingResult result, SessionStatus status)
 	{
@@ -107,8 +107,8 @@ public class ContactsControllers
 		status.setComplete();
 		return "redirect:viewAllContacts.do";
 	}
-	
-	
+
+
 	@RequestMapping("deleteContact")
 	public ModelAndView delete(@RequestParam("id")Integer id)
 	{
@@ -116,5 +116,5 @@ public class ContactsControllers
 		contactsDAO.delete(id);
 		return mav;
 	}
-	
+
 }
